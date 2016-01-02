@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% macro ughbr() -%}<br clear='left'><br><br>{% endmacro %}
+{% macro ldap_long(k,v) -%}
+       <h3>{{ v['cn'] | wikitech }} — {{ v['uid'] }}</h3>
+       <em>from LDAP</em>
+       <dl>
+           <dt>uid</dt><dd>{{ v['uidNumber'] }}</dd>
+           <dt>shell name</dt><dd>{{ v['uid'] }}</dd>
+           <dt>wikitech user name</dt><dd>{{ v['cn'] | wikitech }}</a></dd>
+           {% if k in ldap_to_phab %}
+           <dt>phabricator user</dt><dd><ul>
+           {% for pk,pv in ldap_to_phab[k] | dictsort %}
+           <li> {{ phab_short(pk,pv) }} </li>
+           {% endfor %}
+           </ul>
+           {% endif %} 
+           {% if v['groups'] %}
+           <dt>member of groups</dt><dd><ul>
+           {% for group in v['groups'].values() | sort %}
+           <li>{{ group['cn'] | querylink }}</li>
+           {% endfor %}</ul></dd>{% endif %}
+       </dl>
+{{ ughbr() }}
+{%- endmacro %}
+
+{% macro ldap_short(k,v) -%}
+{{ v['cn'] | wikitech }}
+{%- if k in ldap_to_phab %} — 
+{% for pk, pv in ldap_to_phab[k] | dictsort %}
+{% if not loop.first %} / {% endif -%}
+{% if loop.length == 1 %}{{ phab_short(pk, pv) }}{% else %}{{ phab_supershort(pk, pv) }}{% endif -%}
+{% endfor -%}
+{% endif -%}
+{%- endmacro %}
+
+{% macro phab_long(k,v) -%}
+       <h3><a href='{{v['url']}}'>{{ v['formatted_name']}}</a></h3>
+       <em>from Phabricator</em>
+       <dl>
+           <dt>username</dt><dd>@{{ v['username'] }}</dd>
+{%- if v['MediaWiki User'] != 'Unknown' %}<dt>SUL/mediawiki</dt><dd><a href='https://mediawiki.org/wiki/User:{{v['MediaWiki User'] | urlencode}}'>{{v['MediaWiki User']}}</a></dd>{% endif -%}
+{%- if v['LDAP User'] != 'Unknown' %}<dt>LDAP/Wikitech</dt><dd>{{ v['LDAP User'] | wikitech }}</dd>{% endif -%}
+{%- if v['IRC Nick'] != 'Unknwon' %}<dt>IRC</dt><dd>{{ v['IRC Nick'] }}</dd>{% endif -%}
+       </dl>
+{{ ughbr() }}
+{%- endmacro %}
+
+{% macro phab_supershort(k,v) -%}
+@<a href='{{v['url']}}'>{{v['username']}}</a>
+{%- endmacro %}
+
+{% macro phab_short(k,v) -%}
+{{ phab_supershort(k,v) }}
+{%- if v['MediaWiki User'] != 'Unknown' %} — SUL <a href='https://mediawiki.org/wiki/User:{{v['MediaWiki User'] | urlencode}}'>{{v['MediaWiki User']}}</a>{% endif -%}
+{%- if v['LDAP User'] != 'Unknown' %} — LDAP {{ v['LDAP User'] | wikitech }}{% endif -%}
+{%- if v['IRC Nick'] != 'Unknwon' %} — IRC {{ v['IRC Nick'] }}{% endif -%}
+{%- endmacro %}
+
+{% macro group_long(k,v) -%}
+<h3>{{v['cn']}}</h3>
+       <dl>
+           <dt>gid</dt><dd>{{ v['gidNumber'] }}</dd>
+           <dt>members</dt><dd><ul>
+           {% for pk,pv in v['member'] | dictsort %}
+           <li> {{ ldap_short(pk,pv) }} </li>
+           {% endfor %}
+      </dl>
+{{ ughbr() }}
+{%- endmacro %}
+
+{% block content %}
+       <div class="page-header">
+          <h1 style="margin-top:1em;">{{ query }}</h1>
+       </div>
+       <h2>Users</h2>
+       {% for k,v in users | dictsort %}
+       {% if v['type'] == 'ldap' %}
+       {{ ldap_long(k,v) }}
+       {% elif v['type'] == 'phab' %}
+       {{ phab_long(k,v) }}
+       {% else %}
+       ????
+       {% endif %}
+       {% else %}<em>(no users found)</em>{{ ughbr() }}{% endfor %}
+
+       <h2>Groups</h2>
+       {% for k,v in groups | dictsort %}
+       {{ group_long(k,v) }}
+       {% else %}<em>(no groups found)</em>{% endfor %}
+{% endblock %}

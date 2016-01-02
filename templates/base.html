@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Contact info</title>
+
+    <link rel="stylesheet" href="//tools-static.wmflabs.org/static/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//tools-static.wmflabs.org/static/bootstrap/tool/tools-footer.css" />
+    
+    <style>#wrap > .container {padding-bottom: 120px;}
+           ul.formelements {padding-left: 0px;}
+           ul.formelements li {display: block; padding-top: 1em;}
+           ul.formelements li:first-child {padding-top: 0;}
+           ul.formelements input[type="file"] {display: inline-block; padding: .4em;}
+
+    dt {width: 12em; overflow: hidden; text-align: right; float: left; clear: left; margin-right: 1em; margin-bottom: 0.5em;}
+    dd {float: left;}
+    h2 {clear: left; margin-top: 0;}
+    h3 {clear: left; margin-top: 0;}
+    ul {padding-left: 0; margin-bottom: 0;}
+    li {display: block;}
+    </style>
+  </head>
+
+  <body>
+    <div id="wrap">
+      <a href="https://github.com/valhallasw/tools-contac"><img style="position: absolute; top: 0; right: 0; border: 0; margin: 0; z-index: 9000;" src="//tools-static.wmflabs.org/static/logos/forkme_right_darkblue.png" alt="Fork me on GitHub"></a>
+      
+      <!-- Begin page content -->
+      <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+{% block content %}
+{% endblock %}
+      </div>
+    </div>
+
+    <div id="footer">
+        <div class="container">
+		    <a href="//tools.wmflabs.org"><img id="footer-icon" src="//tools-static.wmflabs.org/static/logos/powered-by-tool-labs.png" title="Powered by Wikimedia Tool Labs" alt="Powered by Wikimedia Tool Labs"></a>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="//tools-static.wmflabs.org/static/jquery/2.1.0/jquery.min.js"></script>
+    <script src="//tools-static.wmflabs.org/static/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

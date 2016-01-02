@@ -1,0 +1,4 @@
+BeautifulSoup==3.2.1
+flask==0.10.1
+requests==2.2.1
+ldapsupportlib

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+       <div class="page-header">
+          <h1 style="margin-top:1em;">Labs/tools contact info</h1>
+        </div>
+        <p>This tool allows you to find contact information for users and projects. At the moment, this is just a lookup for user ids.</p>
+       
+        <h2>Query</h2>
+        <form action="{{url_for('submit')}}" method="post" enctype="multipart/form-data">
+          <ul class="formelements">
+            <li><label for="identifier">Identifier: </label><br>
+            <input type="text" name="identifier" placeholder="User or group identifier" value="{{value}}">
+            </li>
+           
+            <li>
+            <input type="submit">
+            </li>
+          </ul>
+        </form>
+{% endblock %}
