@@ -11,8 +11,12 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('tools.contact')
 
+secrets = json.load(open('secrets.json'))
+
 app = Flask(__name__)
-app.secret_key = '$#@FDGEG(%gwg983wfg43'
+
+app.secret_key = secrets['flask_app_key']
+
 @app.route("/")
 def index():
     return render_template('index.html')
