@@ -63,9 +63,18 @@
            <dt>members</dt><dd><ul>
            {% for pk,pv in v['member'] | dictsort %}
            <li> {{ ldap_short(pk,pv) }} </li>
-           {% endfor %}
+           {% endfor %}</ul></dd>
+           <dt>phabricator project</dt><dd><ul>
+           {% for pk,pv in v['projects'] | dictsort %}
+           <li> {{ phab_project_short(pk,pv) }} </li>
+           {% endfor %}</ul></dd>
       </dl>
 {{ ughbr() }}
+{%- endmacro %}
+
+{% macro phab_project_short(pk,pv) -%}
+<a href="{{ pv['url'] }}">{{pk}}</a>
+<small>({% for tag in pv['tags'] %}#{{tag}}{%if not loop.last%}, {%endif%}{%endfor%})</small>
 {%- endmacro %}
 
 {% block content %}

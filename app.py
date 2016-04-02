@@ -2,7 +2,7 @@ import os
 import jinja2
 import re
 import ldapquery
-from phabuserquery import PhabricatorUserQuerier
+from phabquery import PhabricatorQuerier
 import json
 from collections import defaultdict
 from flask import Flask, render_template, request, Response, session, redirect, flash, url_for
@@ -27,11 +27,13 @@ def submit():
     logger.debug('Identifier is %r' % identifier)
     if not re.match(r"^[ a-zA-Z0-9\-\.]+$", identifier):
        return 'Identifier must be [a-zA-Z0-9]', 500 
-        
+
+    q = ldapquery.LDAPQuerier()
+    pq = PhabricatorQuerier()
+
     wildcard = len(identifier) >= 3
     parts = []
 
-    q = ldapquery.LDAPQuerier()
     q.connect()
     user_data = q.user_search(identifier, wildcard)
     group_data = q.group_search(identifier, wildcard)
@@ -51,8 +53,9 @@ def submit():
         for dn,u in group['member'].items():
             all_users_cn[dn] = u['cn'].lower()
             all_users_uid[dn] = u['uid'].lower()
+        filteredname = re.sub(r"[^A-Za-z0-9 ]", " ", group['cn'])
+        group['projects'] = pq.get_phabricator_projects(filteredname)
    
-    pq = PhabricatorUserQuerier()
     phab_users = pq.get_phabricator_users(identifier)
 
     for info in phab_users.values():
