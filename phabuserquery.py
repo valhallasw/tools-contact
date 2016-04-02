@@ -12,7 +12,7 @@ class PhabricatorUserQuerier(object):
     def get_user_info(self, p):
         if p in self.cache:
             return self.cache[p]
-        req = self.session.get(self.base + p + "/")
+        req = self.session.get(self.base + p)
         soup = BeautifulSoup(req.text)
         data = soup.find(**{'class': 'phui-property-list-properties'})
         data = [e.text for e in data]
