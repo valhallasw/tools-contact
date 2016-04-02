@@ -21,7 +21,7 @@ app.secret_key = secrets['flask_app_key']
 def index():
     return render_template('index.html')
 
-@app.route("/<identifier>")
+@app.route("/search/<identifier>")
 def query(identifier):
     return render_template('index.html', value=identifier)
 
