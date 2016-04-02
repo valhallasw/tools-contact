@@ -54,7 +54,7 @@
 {{ phab_supershort(k,v) }}
 {%- if v['MediaWiki User'] != 'Unknown' %} — SUL <a href='https://mediawiki.org/wiki/User:{{v['MediaWiki User'] | urlencode}}'>{{v['MediaWiki User']}}</a>{% endif -%}
 {%- if v['LDAP User'] != 'Unknown' %} — LDAP {{ v['LDAP User'] | wikitech }}{% endif -%}
-{%- if v['IRC Nick'] != 'Unknwon' %} — IRC {{ v['IRC Nick'] }}{% endif -%}
+{%- if v['IRC Nick'] != 'Unknown' %} — IRC {{ v['IRC Nick'] }}{% endif -%}
 {%- endmacro %}
 
 {% macro group_long(k,v) -%}
