@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+       <div class="page-header">
+          <h1 style="margin-top:1em;">Messaging, step 1: phabricator</h1>
+       </div>
+       <h2>Create a phabricator task</h2>
+       <a href="{{phaburl}}">Bug creation link</a><br>
+       This will CC: {{phabusers | join(", ")}}<br>
+       This will use tags: {{projects | join(", ")}}
+
+       <h2>Wikitech messaging</h2>
+       <form action="{{url_for('message_wikitech')}}" method="post" enctype="multipart/form-data">
+       {% for user in ldapusers %}<input type='hidden' name='ldapusers' value='{{user}}'/>{%endfor%}
+       <input placeholder="Title" name='title'/><br>
+       <textarea cols="75" rows="10" name="message" placeholder="message"></textarea><br>
+       <input type="submit">
+{% endblock %}

@@ -8,6 +8,8 @@ from collections import defaultdict
 from flask import Flask, render_template, request, Response, session, redirect, flash, url_for
 
 import logging
+import urllib
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('tools.contact')
 
@@ -90,7 +92,48 @@ def submit():
         ldap_to_phab=ldap_to_phab
     )
 
-    
+   
+@app.route("/message_phab", methods=['POST'])
+def message_phab():
+    phabusers = request.form.getlist('phabusers')
+    projects = request.form.getlist('projects')
+    ldapusers = request.form.getlist('ldapusers')
+
+    phaburl = "https://phabricator.wikimedia.org/maniphest/task/edit/form/1/?" + \
+        urllib.urlencode([('tags[]', tag.encode('utf-8')) for tag in projects] + 
+                         [('subscribers[]', user.encode('utf-8')) for user in phabusers])
+
+    return render_template(
+        'message_phab.html',
+        phabusers=phabusers,
+        projects=projects,
+        ldapusers=ldapusers,
+        phaburl=phaburl,
+    )
+
+@app.route("/message_wikitech", methods=['POST'])
+def message_wikitech():
+    ldapusers = request.form.getlist('ldapusers')
+    message = request.form['message']
+    title = request.form['title']
+
+    useruris = {}
+    baseuri = "https://wikitech.wikimedia.org/w/index.php?"
+    baseparams = [
+        ('action', 'edit'),
+        ('section', 'new'),
+        ('preloadtitle', title),
+        ('preload', 'User:Merlijn van Deen/$1'),
+        ('preloadparams[]', message)
+    ]
+    for user in ldapusers:
+        useruris[user] = baseuri + urllib.urlencode(baseparams + [('title', 'User:' + user)])
+      
+    return render_template(
+        'message_wikitech.html',
+        useruris = useruris,
+    )
+ 
 @app.template_filter('wikitech')
 def wikitech_link(cn):
     return jinja2.Markup(

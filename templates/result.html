@@ -24,6 +24,7 @@
 {%- endmacro %}
 
 {% macro ldap_short(k,v) -%}
+<input type='checkbox' name='ldapusers' value='{{ v['cn'] }}' />
 {{ v['cn'] | wikitech }}
 {%- if k in ldap_to_phab %} — 
 {% for pk, pv in ldap_to_phab[k] | dictsort %}
@@ -46,7 +47,7 @@
 {%- endmacro %}
 
 {% macro phab_supershort(k,v) -%}
-@<a href='{{v['url']}}'>{{v['username']}}</a>
+<input type='checkbox' name='phabusers' value='{{v['username']}}'>@<a href='{{v['url']}}'>{{v['username']}}</a>
 {%- endmacro %}
 
 {% macro phab_short(k,v) -%}
@@ -73,11 +74,12 @@
 {%- endmacro %}
 
 {% macro phab_project_short(pk,pv) -%}
-<a href="{{ pv['url'] }}">{{pk}}</a>
+<input type='checkbox' name='projects' value='{{ pk }}'><a href="{{ pv['url'] }}">{{pk}}</a>
 <small>({% for tag in pv['tags'] %}#{{tag}}{%if not loop.last%}, {%endif%}{%endfor%})</small>
 {%- endmacro %}
 
 {% block content %}
+       <form action="{{url_for('message_phab')}}" method="post" enctype="multipart/form-data">
        <div class="page-header">
           <h1 style="margin-top:1em;">{{ query }}</h1>
        </div>
@@ -96,4 +98,7 @@
        {% for k,v in groups | dictsort %}
        {{ group_long(k,v) }}
        {% else %}<em>(no groups found)</em>{% endfor %}
+
+       <input type='submit' />
+       </form>
 {% endblock %}
