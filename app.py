@@ -127,7 +127,7 @@ def message_wikitech():
         ('preloadparams[]', message)
     ]
     for user in ldapusers:
-        useruris[user] = baseuri + urllib.urlencode(baseparams + [('title', 'User:' + user)])
+        useruris[user] = baseuri + urllib.urlencode(baseparams + [('title', 'User talk:' + user)])
       
     return render_template(
         'message_wikitech.html',
