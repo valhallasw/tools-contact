@@ -42,10 +42,10 @@ class PhabricatorQuerier(object):
  
     @lru_cache(cachesize)
     def get_phabricator_projects(self, q):
-        projects = {"Tool-Labs-tools-Other":
+        projects = {"Tools":
             {"url": "https://phabricator.wikimedia.org/project/view/703/",
-             "name": "Tool-Labs-tools-Other",
-             "tags": ["tool-labs-tools-other", "Tool-Labs-tools-Other"]
+             "name": "Tools",
+             "tags": ["Tools", "tools", "tool-labs-tools-other"]
             }
         }
         req = self.session.get(
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     pq = PhabricatorQuerier()
     print json.dumps(pq.get_phabricator_users('val'))
 
-    print json.dumps(pq.get_phabricator_projects('tool-labs-tools-other'))
+    print json.dumps(pq.get_phabricator_projects('tools'))
