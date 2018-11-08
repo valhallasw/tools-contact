@@ -1,7 +1,12 @@
 import requests
 import json
-from BeautifulSoup import BeautifulSoup
-from repoze.lru import lru_cache
+from bs4 import BeautifulSoup
+
+import sys
+if sys.version_info[0] == 2:
+    from repoze.lru import lru_cache
+else:
+    from functools import lru_cache
 
 cachesize = 1024
 
@@ -14,9 +19,9 @@ class PhabricatorQuerier(object):
     @lru_cache(cachesize) 
     def get_user_info(self, p):
         req = self.session.get(self.base + p)
-        soup = BeautifulSoup(req.text)
+        soup = BeautifulSoup(req.text, 'lxml')
         data = soup.find(**{'class': 'phui-property-list-properties'})
-        data = [e.text for e in data]
+        data = [e.text.strip() for e in data]
         data = dict(zip(data[::2], data[1::2]))
         return data
 
@@ -27,7 +32,7 @@ class PhabricatorQuerier(object):
             self.base + '/typeahead/class/PhabricatorPeopleDatasource/',
             params={'q': q, '__ajax__': True},
         )
-        
+
         userlist = json.loads(req.text[len('for (;;);'):])['payload']
         
         for entry in userlist[:5]:
@@ -36,6 +41,7 @@ class PhabricatorQuerier(object):
             data['formatted_name'] = formatted_name
             data['username'] = username
             data['url'] = self.base + p
+            data['MediaWiki User'] = data['MediaWiki User'].replace(" [ Global Accounts ]", "")
             users[username] = data
             
         return users
@@ -54,7 +60,7 @@ class PhabricatorQuerier(object):
         )
         
         projectlist = json.loads(req.text[len('for (;;);'):])['payload']
-        print projectlist 
+        print(projectlist)
         for entry in projectlist:
             tags, p, PHID, _, name = entry[:5]
             data = {}
@@ -70,6 +76,6 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
     pq = PhabricatorQuerier()
-    print json.dumps(pq.get_phabricator_users('val'))
+    print(json.dumps(pq.get_phabricator_users('val')))
 
-    print json.dumps(pq.get_phabricator_projects('tools'))
+    print(json.dumps(pq.get_phabricator_projects('tools')))
