@@ -24,6 +24,8 @@ class LDAPQuerier(object):
 
     def decode(self, element):
         if isinstance(element, str):
+            return element
+        if isinstance(element, bytes):
             return element.decode('utf-8')
         if isinstance(element, (list, tuple)):
             return [self.decode(x) for x in element]
@@ -64,7 +66,7 @@ class LDAPQuerier(object):
 
     def groups_for_member(self, member_cn):
         filterstr = '(member=%s)' % member_cn
-	return self.group_query(filterstr, attrlist=['cn', 'gidNumber'])
+        return self.group_query(filterstr, attrlist=['cn', 'gidNumber'])
 
     def group_query(self, filterstr, attrlist=['cn', 'member', 'gidNumber']):
         servicegroups = self.search_s(
@@ -104,7 +106,7 @@ if __name__ == '__main__':
     q.connect()
     #q.ldapConn._trace_level = 1
     import json
-    print json.dumps(q.user_search('merlijn', True),indent=2)
-    print json.dumps(q.user_search('1092'),indent=2)
-    print json.dumps(q.group_search('ikibu', True),indent=2)
-    print json.dumps(q.group_search('52773'), indent=2)
+    print(json.dumps(q.user_search('merlijn', True),indent=2))
+    print(json.dumps(q.user_search('1092'),indent=2))
+    print(json.dumps(q.group_search('ikibu', True),indent=2))
+    print(json.dumps(q.group_search('52773'), indent=2))
