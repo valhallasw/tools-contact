@@ -122,8 +122,6 @@ class LDAPSupportLib:
     def connect(self):
         ds = ldap.initialize(self.ldapHost)
         ds.protocol_version = ldap.VERSION3
-        if self.sslType == "start_tls":
-            ds.start_tls_s()
 
         ds.simple_bind_s(self.binddn, self.bindpw)
 
