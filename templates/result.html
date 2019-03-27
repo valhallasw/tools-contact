@@ -16,7 +16,7 @@
            {% endif %} 
            {% if v['groups'] %}
            <dt>member of groups</dt><dd><ul>
-           {% for group in v['groups'].values() | sort %}
+           {% for group in v['groups'].values() | sort(attribute='cn') %}
            <li>{{ group['cn'] | querylink }}</li>
            {% endfor %}</ul></dd>{% endif %}
        </dl>
